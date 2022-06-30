@@ -1,0 +1,6 @@
+/pass.txt
+/local.properties
+/.vscode/*
+/.venv/*
+**/__pycache__/*
+

@@ -1,6 +1,11 @@
-/pass.txt
+/secret/*
 /local.properties
 /.vscode/*
-/.venv/*
+/venv/*
 **/__pycache__/*
 
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

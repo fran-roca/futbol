@@ -13,7 +13,7 @@ username = None
 password = None
 
 # Variable de entorno
-if 'AWS_REGION' not in os.environ and os.path.isfile(LOCAL_PROPERTIES):
+if 'DB_HOST' not in os.environ and os.path.isfile(LOCAL_PROPERTIES):
     with open(LOCAL_PROPERTIES) as f:
         for k, v in json.load(f).items():
             os.environ[k] = v

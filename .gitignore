@@ -1,5 +1,4 @@
 /secret/*
-/local.properties
 /.vscode/*
 /venv/*
 **/__pycache__/*

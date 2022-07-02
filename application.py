@@ -10,10 +10,10 @@ import app.src.utils.constants as c
 warnings.filterwarnings('ignore')
 
 # -*- coding: utf-8 -*-
-app = Flask(__name__)
+application = Flask(__name__)
 
 # usando el decorador @app.route para gestionar los enrutadores (Método GET)
-@app.route('/', methods=['GET'])
+@application.route('/', methods=['GET'])
 def root():
     """
         Función para gestionar la salida de la ruta raíz.
@@ -24,7 +24,7 @@ def root():
     return "{'Proyecto':'Futbol'}"
 
 
-@app.route('/catalog/equipo', methods=['GET'])
+@application.route('/catalog/equipo', methods=['GET'])
 def get_equipo(desc = ''):
     """
         Función para obtener los equipos.
@@ -38,7 +38,7 @@ def get_equipo(desc = ''):
     return get_catalog(c.TABLE_EQUIPO, desc )
 
 
-@app.route('/catalog/perfil', methods=['GET'])
+@application.route('/catalog/perfil', methods=['GET'])
 def get_perfil(desc = ''):
     """
         Función para obtener los perfiles.
@@ -52,7 +52,7 @@ def get_perfil(desc = ''):
     return get_catalog(c.TABLE_PERFIL, desc )
 
 
-@app.route('/catalog/pie', methods=['GET'])
+@application.route('/catalog/pie', methods=['GET'])
 def get_pie(desc = ''):
     """
         Función para obtener los pies.
@@ -66,7 +66,7 @@ def get_pie(desc = ''):
     return get_catalog(c.TABLE_PIE, desc )
 
 
-@app.route('/catalog/posicion', methods=['GET'])
+@application.route('/catalog/posicion', methods=['GET'])
 def get_posicion(desc = ''):
     """
         Función para obtener las posiciones.
@@ -80,7 +80,7 @@ def get_posicion(desc = ''):
     return get_catalog(c.TABLE_POSICION, desc )
 
 
-@app.route('/catalog/seguimiento', methods=['GET'])
+@application.route('/catalog/seguimiento', methods=['GET'])
 def get_seguimiento(desc = ''):
     """
         Función para obtener los seguimientos.
@@ -94,7 +94,7 @@ def get_seguimiento(desc = ''):
     return get_catalog(c.TABLE_SEGUIMIENTO, desc )
 
 
-@app.route('/catalog/somatotipo', methods=['GET'])
+@application.route('/catalog/somatotipo', methods=['GET'])
 def get_somatotipo(desc = ''):
     """
         Función para obtener los somatotipos.
@@ -108,7 +108,7 @@ def get_somatotipo(desc = ''):
     return get_catalog(c.TABLE_SOMATOTIPO, desc )
 
 
-@app.route('/catalog/visualizacion', methods=['GET'])
+@application.route('/catalog/visualizacion', methods=['GET'])
 def get_visualizacion(desc = ''):
     """
         Función para obtener los tipo de visualizacion.
@@ -124,4 +124,4 @@ def get_visualizacion(desc = ''):
 # main
 if __name__ == '__main__':
     # ejecución de la app
-    app.run(host='0.0.0.0', debug = False)
+    application.run(host='0.0.0.0', debug = False)

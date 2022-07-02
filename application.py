@@ -124,4 +124,4 @@ def get_visualizacion(desc = ''):
 # main
 if __name__ == '__main__':
     # ejecución de la app
-    application.run(host='0.0.0.0', debug = False)
+    application.run(host='0.0.0.0', port=80, debug=False)

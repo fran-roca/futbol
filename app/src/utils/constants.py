@@ -1,5 +1,5 @@
 LOCAL_PROPERTIES = 'local.properties'
-
+APP_PORT = 'port'
 DB_HOST = "DB_HOST"
 DB_PASSWORD = "DB_PASSWORD"
 DB_USER = "DB_USER"

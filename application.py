@@ -1,5 +1,6 @@
 
 from flask import Flask, request
+from flask_cors import CORS
 from app.src.data.catalog import get_catalog
 import os
 import warnings
@@ -11,6 +12,7 @@ warnings.filterwarnings('ignore')
 
 # -*- coding: utf-8 -*-
 application = Flask(__name__)
+CORS(application)
 
 # usando el decorador @app.route para gestionar los enrutadores (Método GET)
 @application.route('/', methods=['GET'])

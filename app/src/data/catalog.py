@@ -6,7 +6,20 @@ cursor = client.connection.cursor()
 #creates db
 def get_catalog(table, desc):
     row_headers = ['id', 'descripcion']
-    query = "Select * from {} where descripcion like '{}%'".format(table, desc)
+    query = """Select * from {} 
+                where lower(descripcion) like lower('{}%') 
+                order by descripcion""".format(table, desc if desc else '')
+    return execute_query(query, row_headers)
+
+def get_paises(pais):
+    row_headers = ['id', 'nombre', 'codigoISO2', 'codigoISO3']
+    query = """Select id_pais, nombre, codigoISO2, codigoISO3 
+                    from pais 
+                    where lower(nombre) like lower('{}%') 
+                    order by nombre""".format(pais if pais else '')
+    return execute_query(query, row_headers)
+
+def execute_query(query, row_headers):
     cursor.execute(query)
     rows = cursor.fetchall()
 

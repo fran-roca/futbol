@@ -17,3 +17,7 @@ TABLE_SEGUIMIENTO = "seguimiento"
 TABLE_SOMATOTIPO = "somatotipo"
 TABLE_VALORACION = "valoracion"
 TABLE_VISUALIZACION = "visualizacion"
+
+URL_PARAM_ID = 'id'
+URL_PARAM_DESCRIPCION = 'desc'
+URL_PARAM_NOMBRE = 'nombre'

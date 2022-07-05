@@ -1,7 +1,7 @@
 
 from flask import Flask, request
 from flask_cors import CORS
-from app.src.data.catalog import get_catalog
+from app.src.data.catalog import get_catalog, get_paises
 import os
 import warnings
 import app.src.utils.constants as c
@@ -27,7 +27,7 @@ def root():
 
 
 @application.route('/catalog/equipo', methods=['GET'])
-def get_equipo(desc = ''):
+def get_equipo():
     """
         Función para obtener los equipos.
 
@@ -37,11 +37,13 @@ def get_equipo(desc = ''):
                 descripcion: nombre del equipo (string)
                 }
     """
+    args = request.args
+    desc = args.get(c.URL_PARAM_DESCRIPCION)
     return get_catalog(c.TABLE_EQUIPO, desc )
 
 
 @application.route('/catalog/perfil', methods=['GET'])
-def get_perfil(desc = ''):
+def get_perfil():
     """
         Función para obtener los perfiles.
 
@@ -51,11 +53,13 @@ def get_perfil(desc = ''):
                 descripcion: nombre del perfil (string)
                 }
     """
+    args = request.args
+    desc = args.get(c.URL_PARAM_DESCRIPCION)
     return get_catalog(c.TABLE_PERFIL, desc )
 
 
 @application.route('/catalog/pie', methods=['GET'])
-def get_pie(desc = ''):
+def get_pie():
     """
         Función para obtener los pies.
 
@@ -65,11 +69,13 @@ def get_pie(desc = ''):
                 descripcion: pie (string)
                 }
     """
+    args = request.args
+    desc = args.get(c.URL_PARAM_DESCRIPCION)
     return get_catalog(c.TABLE_PIE, desc )
 
 
 @application.route('/catalog/posicion', methods=['GET'])
-def get_posicion(desc = ''):
+def get_posicion():
     """
         Función para obtener las posiciones.
 
@@ -79,11 +85,13 @@ def get_posicion(desc = ''):
                 descripcion: nombre de la posicion (string)
                 }
     """
+    args = request.args
+    desc = args.get(c.URL_PARAM_DESCRIPCION)
     return get_catalog(c.TABLE_POSICION, desc )
 
 
 @application.route('/catalog/seguimiento', methods=['GET'])
-def get_seguimiento(desc = ''):
+def get_seguimiento():
     """
         Función para obtener los seguimientos.
 
@@ -93,11 +101,13 @@ def get_seguimiento(desc = ''):
                 descripcion: nombre del seguimiento (string)
                 }
     """
+    args = request.args
+    desc = args.get(c.URL_PARAM_DESCRIPCION)
     return get_catalog(c.TABLE_SEGUIMIENTO, desc )
 
 
 @application.route('/catalog/somatotipo', methods=['GET'])
-def get_somatotipo(desc = ''):
+def get_somatotipo():
     """
         Función para obtener los somatotipos.
 
@@ -107,11 +117,13 @@ def get_somatotipo(desc = ''):
                 descripcion: nombre del somatotipo (string)
                 }
     """
+    args = request.args
+    desc = args.get(c.URL_PARAM_DESCRIPCION)
     return get_catalog(c.TABLE_SOMATOTIPO, desc )
 
 
 @application.route('/catalog/visualizacion', methods=['GET'])
-def get_visualizacion(desc = ''):
+def get_visualizacion():
     """
         Función para obtener los tipo de visualizacion.
 
@@ -121,7 +133,26 @@ def get_visualizacion(desc = ''):
                 descripcion: nombre de la visualizacion (string)
                 }
     """
+    args = request.args
+    desc = args.get(c.URL_PARAM_DESCRIPCION)
     return get_catalog(c.TABLE_VISUALIZACION, desc )
+
+@application.route('/catalog/pais', methods=['GET'])
+def get_pais():
+    """
+        Función para obtener los paises.
+
+        Returns:
+           json. {
+                id: id_pais (numeric),
+                nombre: nombre del pais (string)
+                codigoISO2: codigoISO2 (string)
+                codigoISO3: codigoISO3 (string)
+                }
+    """
+    args = request.args
+    pais = args.get(c.URL_PARAM_NOMBRE)
+    return get_paises(pais )
 
 # main
 if __name__ == '__main__':

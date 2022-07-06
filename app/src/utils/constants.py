@@ -20,4 +20,5 @@ TABLE_VISUALIZACION = "visualizacion"
 
 URL_PARAM_ID = 'id'
 URL_PARAM_DESCRIPCION = 'desc'
+URL_PARAM_MIN = 'min'
 URL_PARAM_NOMBRE = 'nombre'

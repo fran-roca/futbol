@@ -1,7 +1,9 @@
 
+from xmlrpc.client import boolean
 from flask import Flask, request
 from flask_cors import CORS
 from app.src.data.catalog import get_catalog, get_paises
+from app.src.data.jugador import get_jugador, get_min_jugador, insert_jugador
 import os
 import warnings
 import app.src.utils.constants as c
@@ -25,6 +27,13 @@ def root():
     """
     return "{'Proyecto':'Futbol'}"
 
+@application.route('/jugador', methods=['GET', 'POST','DELETE', 'PATCH'])
+def jugador():
+    if request.method == 'GET':
+        args = request.args.to_dict()
+        return get_jugador(args) if c.URL_PARAM_ID in args else get_min_jugador(args)
+    if request.method == 'POST':
+        return insert_jugador(request.get_json())
 
 @application.route('/catalog/equipo', methods=['GET'])
 def get_equipo():
@@ -37,9 +46,8 @@ def get_equipo():
                 descripcion: nombre del equipo (string)
                 }
     """
-    args = request.args
-    desc = args.get(c.URL_PARAM_DESCRIPCION)
-    return get_catalog(c.TABLE_EQUIPO, desc )
+    args = request.args.to_dict()
+    return get_catalog(c.TABLE_EQUIPO, args)
 
 
 @application.route('/catalog/perfil', methods=['GET'])
@@ -53,9 +61,8 @@ def get_perfil():
                 descripcion: nombre del perfil (string)
                 }
     """
-    args = request.args
-    desc = args.get(c.URL_PARAM_DESCRIPCION)
-    return get_catalog(c.TABLE_PERFIL, desc )
+    args = request.args.to_dict()
+    return get_catalog(c.TABLE_PERFIL, args)
 
 
 @application.route('/catalog/pie', methods=['GET'])
@@ -69,9 +76,8 @@ def get_pie():
                 descripcion: pie (string)
                 }
     """
-    args = request.args
-    desc = args.get(c.URL_PARAM_DESCRIPCION)
-    return get_catalog(c.TABLE_PIE, desc )
+    args = request.args.to_dict()
+    return get_catalog(c.TABLE_PIE, args)
 
 
 @application.route('/catalog/posicion', methods=['GET'])
@@ -85,9 +91,8 @@ def get_posicion():
                 descripcion: nombre de la posicion (string)
                 }
     """
-    args = request.args
-    desc = args.get(c.URL_PARAM_DESCRIPCION)
-    return get_catalog(c.TABLE_POSICION, desc )
+    args = request.args.to_dict()
+    return get_catalog(c.TABLE_POSICION, args)
 
 
 @application.route('/catalog/seguimiento', methods=['GET'])
@@ -101,9 +106,8 @@ def get_seguimiento():
                 descripcion: nombre del seguimiento (string)
                 }
     """
-    args = request.args
-    desc = args.get(c.URL_PARAM_DESCRIPCION)
-    return get_catalog(c.TABLE_SEGUIMIENTO, desc )
+    args = request.args.to_dict()
+    return get_catalog(c.TABLE_SEGUIMIENTO, args)
 
 
 @application.route('/catalog/somatotipo', methods=['GET'])
@@ -117,9 +121,8 @@ def get_somatotipo():
                 descripcion: nombre del somatotipo (string)
                 }
     """
-    args = request.args
-    desc = args.get(c.URL_PARAM_DESCRIPCION)
-    return get_catalog(c.TABLE_SOMATOTIPO, desc )
+    args = request.args.to_dict()
+    return get_catalog(c.TABLE_SOMATOTIPO, args)
 
 
 @application.route('/catalog/visualizacion', methods=['GET'])
@@ -133,9 +136,8 @@ def get_visualizacion():
                 descripcion: nombre de la visualizacion (string)
                 }
     """
-    args = request.args
-    desc = args.get(c.URL_PARAM_DESCRIPCION)
-    return get_catalog(c.TABLE_VISUALIZACION, desc )
+    args = request.args.to_dict()
+    return get_catalog(c.TABLE_VISUALIZACION, args)
 
 @application.route('/catalog/pais', methods=['GET'])
 def get_pais():
@@ -150,9 +152,8 @@ def get_pais():
                 codigoISO3: codigoISO3 (string)
                 }
     """
-    args = request.args
-    pais = args.get(c.URL_PARAM_NOMBRE)
-    return get_paises(pais )
+    args = request.args.to_dict()
+    return get_paises(args)
 
 # main
 if __name__ == '__main__':

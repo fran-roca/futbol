@@ -1,4 +1,11 @@
 -- -----------------------------------------------------
+-- Schema futbol-db
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `futbol-db` ;
+USE `futbol-db` ;
+
+
+-- -----------------------------------------------------
 -- Table `futbol-db`.`pie`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `futbol-db`.`pie` (
@@ -60,18 +67,18 @@ CREATE TABLE IF NOT EXISTS `futbol-db`.`jugador` (
   `nombre` VARCHAR(120) NULL,
   `apodo` VARCHAR(120) NULL,
   `anio` INT NULL,
+  `id_equipo` INT NOT NULL,
+  `numero` INT NULL,
+  `id_pie` INT NOT NULL,
+  `id_somatotipo` INT NOT NULL,
+  `estatura` INT NULL,
   `id_pais` INT NOT NULL,
   `id_pais_nacionalidad` INT NOT NULL,
-  `id_posicion` INT NOT NULL,
+  `id_posicion1` INT NOT NULL,
   `id_posicion2` INT NULL,
-  `id_pie` INT NOT NULL,
-  `talla` INT NULL,
-  `id_somatotipo` INT NOT NULL,
-  `numero` INT NULL,
-  `id_equipo` INT NOT NULL,
   PRIMARY KEY (`id_jugador`),
   INDEX `fk_jugador_pie1_idx` (`id_pie` ASC),
-  INDEX `fk_jugador_posicion1_idx` (`id_posicion` ASC),
+  INDEX `fk_jugador_posicion1_idx` (`id_posicion1` ASC),
   INDEX `fk_jugador_posicion2_idx` (`id_posicion2` ASC),
   INDEX `fk_jugador_pais1_idx` (`id_pais` ASC),
   INDEX `fk_jugador_pais2_idx` (`id_pais_nacionalidad` ASC),
@@ -83,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `futbol-db`.`jugador` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_jugador_posicion1`
-    FOREIGN KEY (`id_posicion`)
+    FOREIGN KEY (`id_posicion1`)
     REFERENCES `futbol-db`.`posicion` (`id_posicion`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,

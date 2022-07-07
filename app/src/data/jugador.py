@@ -1,3 +1,5 @@
+import json
+from app.src.data.jugadorPerfil import *
 from app import client
 import app.src.utils.constants as c
 
@@ -41,34 +43,72 @@ def get_jugador(params):
                     WHERE
                         j.id_jugador={}"""\
                         .format( params[c.URL_PARAM_ID])
-    return client.execute_query_one(query, row_headers)
+                        
+    cursor.execute(query)
+    result = cursor.fetchone()
+    json_data = {}
+    if result:
+        json_data=dict(zip(row_headers,result))
+    
+    perfiles = get_jugador_perfiles(params[c.URL_PARAM_ID])
+    json_data['perfiles'] = perfiles
+    
+    return json.dumps(json_data, ensure_ascii=False).encode('utf8')
     
 
 def get_min_jugador(params):
     row_headers = ["id_jugador", "nombre"]
     sql_headers = "id_jugador, nombre"
-    if c.URL_PARAM_ID in params:
-        print("select {} from jugador where id_jugador={}".format( sql_headers, params[c.URL_PARAM_ID]))
-        
-    else:
-        query = """Select {} from jugador
-                    where lower(nombre) like lower('{}%') 
-                    order by nombre"""\
-                        .format( sql_headers, params[c.URL_PARAM_NOMBRE] if c.URL_PARAM_NOMBRE in params else '')
-        return client.execute_query_multi(query, row_headers)
+
+    query = """Select {} from jugador
+                where lower(nombre) like lower('{}%') 
+                order by nombre"""\
+                    .format( sql_headers, params[c.URL_PARAM_NOMBRE] if c.URL_PARAM_NOMBRE in params else '')
+    return client.execute_query_multi(query, row_headers)
     
 
 def insert_jugador(data_jugador):
+    perfiles = data_jugador['id_perfiles']
+    data_jugador['id_perfiles'] = None
+
     query = ("INSERT INTO jugador "
               "(nombre, apodo, anio, id_equipo, numero, id_pie, id_somatotipo, estatura, "
               "id_pais, id_pais_nacionalidad, id_posicion1, id_posicion2) "
               "VALUES (%(nombre)s, %(apodo)s, %(anio)s, %(id_equipo)s, %(numero)s, %(id_pie)s, "
               "%(id_somatotipo)s, %(estatura)s, %(id_pais)s, %(id_pais_nacionalidad)s, "
               "%(id_posicion1)s, %(id_posicion2)s)")
-    print(data_jugador)
+              
+    cursor.execute(query, data_jugador)
+    new_id_jugador = cursor.lastrowid
+    client.connection.commit()
+    
+    insert_jugador_perfil(new_id_jugador, perfiles)
+
+    return {'id_jugador': new_id_jugador, 'nombre': data_jugador['nombre']}
+    
+
+def update_jugador(data_jugador):
+    perfiles = data_jugador['id_perfiles']
+    data_jugador['id_perfiles'] = None
+
+    query = ("UPDATE jugador "
+                "SET "
+                    "nombre = %(nombre)s, "
+                    "apodo = %(apodo)s, "
+                    "anio = %(anio)s, "
+                    "id_equipo = %(id_equipo)s, "
+                    "numero = %(numero)s, "
+                    "id_pie = %(id_pie)s, "
+                    "id_somatotipo = %(id_somatotipo)s, "
+                    "estatura = %(estatura)s, "
+                    "id_pais = %(id_pais)s, "
+                    "id_pais_nacionalidad = %(id_pais_nacionalidad)s, "
+                    "id_posicion1 = %(id_posicion1)s, "
+                    "id_posicion2 =  %(id_posicion2)s "
+                "WHERE id_jugador = %(id_jugador)s ")
+              
     cursor.execute(query, data_jugador)
     client.connection.commit()
-    new_jugador = get_min_jugador({'id': cursor.lastrowid})
-    print(new_jugador)
-    return new_jugador
 
+    update_jugador_perfil(data_jugador['id_jugador'], perfiles)
+    return {'id_jugador': data_jugador['id_jugador'], 'nombre': data_jugador['nombre']}

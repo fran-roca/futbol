@@ -3,7 +3,8 @@ from xmlrpc.client import boolean
 from flask import Flask, request
 from flask_cors import CORS
 from app.src.data.catalog import get_catalog, get_paises
-from app.src.data.jugador import get_jugador, get_min_jugador, insert_jugador
+from app.src.data.jugador import get_jugador, get_min_jugador, insert_jugador, update_jugador
+from app.src.data.valoracion import insert_valoracion
 import os
 import warnings
 import app.src.utils.constants as c
@@ -27,13 +28,22 @@ def root():
     """
     return "{'Proyecto':'Futbol'}"
 
-@application.route('/jugador', methods=['GET', 'POST','DELETE', 'PATCH'])
+@application.route('/jugador', methods=['GET', 'POST', 'PUT','DELETE'])
 def jugador():
     if request.method == 'GET':
         args = request.args.to_dict()
         return get_jugador(args) if c.URL_PARAM_ID in args else get_min_jugador(args)
     if request.method == 'POST':
         return insert_jugador(request.get_json())
+    if request.method == 'PUT':
+        return update_jugador(request.get_json())
+
+@application.route('/valoracion', methods=['GET', 'POST'])
+def valoracion():
+    if request.method == 'GET':
+        return {}
+    if request.method == 'POST':
+        return insert_valoracion(request.get_json())
 
 @application.route('/catalog/equipo', methods=['GET'])
 def get_equipo():
@@ -93,6 +103,21 @@ def get_posicion():
     """
     args = request.args.to_dict()
     return get_catalog(c.TABLE_POSICION, args)
+
+
+@application.route('/catalog/scout', methods=['GET'])
+def get_scout():
+    """
+        Función para obtener los scouter.
+
+        Returns:
+           json. {
+                id: id_scout (numeric),
+                descripcion: nombre del scout (string)
+                }
+    """
+    args = request.args.to_dict()
+    return get_catalog(c.TABLE_SCOUT, args)
 
 
 @application.route('/catalog/seguimiento', methods=['GET'])

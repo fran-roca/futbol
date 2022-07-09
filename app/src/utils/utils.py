@@ -1,6 +1,17 @@
 import mysql.connector
+import datetime
 import json
 
+class DateEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+
+        elif isinstance(obj, datetime.date):
+            return obj.strftime("%Y-%m-%d")
+
+        else:
+            return json.JSONEncoder.default(self, obj)
 
 class DocumentDB:
     """
@@ -30,7 +41,7 @@ class DocumentDB:
         json_data=[]
         for result in rows:
             json_data.append(dict(zip(row_headers,result)))
-        return json.dumps(json_data, ensure_ascii=False).encode('utf8')
+        return json.dumps(json_data,cls=DateEncoder, ensure_ascii=False).encode('utf8')
 
     def execute_query_one(self, query, row_headers):
         cursor = self.connection.cursor()
@@ -38,6 +49,6 @@ class DocumentDB:
         result = cursor.fetchone()
         if result:
             json_data=dict(zip(row_headers,result))
-            return json.dumps(json_data, ensure_ascii=False).encode('utf8')
+            return json.dumps(json_data,cls=DateEncoder, ensure_ascii=False).encode('utf8')
         else:
             return {}

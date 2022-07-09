@@ -20,6 +20,8 @@ TABLE_VALORACION = "valoracion"
 TABLE_VISUALIZACION = "visualizacion"
 
 URL_PARAM_ID = 'id'
+URL_PARAM_ID_VALORACION = 'id_valoracion'
+URL_PARAM_ID_JUGADOR = 'id_jugador'
 URL_PARAM_DESCRIPCION = 'desc'
 URL_PARAM_MIN = 'min'
 URL_PARAM_NOMBRE = 'nombre'

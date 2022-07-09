@@ -4,7 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from app.src.data.catalog import get_catalog, get_paises
 from app.src.data.jugador import get_jugador, get_min_jugador, insert_jugador, update_jugador
-from app.src.data.valoracion import insert_valoracion
+from app.src.data.valoracion import get_valoracion, insert_valoracion
 import os
 import warnings
 import app.src.utils.constants as c
@@ -41,7 +41,8 @@ def jugador():
 @application.route('/valoracion', methods=['GET', 'POST'])
 def valoracion():
     if request.method == 'GET':
-        return {}
+        args = request.args.to_dict()
+        return get_valoracion(args)
     if request.method == 'POST':
         return insert_valoracion(request.get_json())
 

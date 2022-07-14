@@ -2243,7 +2243,7 @@ VALUES
 (2239, "Råde"),
 (2240, "Brattvåg"),
 (2241, "Utsikten"),
-(2242, " Gamle Oslo"),
+(2242, "Gamle Oslo"),
 (2243, "Blyth Spartans"),
 (2244, "Egersund"),
 (2245, "Fløy-Flekkerøy"),
@@ -3031,3 +3031,11 @@ INSERT INTO `futbol-db`.`visualizacion`
 VALUES
 (1, "Vivo"),
 (2, "TV");
+
+INSERT INTO `futbol-db`.`role`
+(`id_role`,
+`name`)
+VALUES
+(1, 'ROLE_USER'),
+(2, 'ROLE_MODERATOR'),
+(3, 'ROLE_ADMIN');

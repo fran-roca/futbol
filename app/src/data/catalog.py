@@ -1,32 +1,34 @@
-import json
+from app.src.data.orm import Pais
 import app.src.utils.constants as c
-from app import client
+from app.src.utils.utils import Utils
+
 
 
 #creates db
-def get_catalog(table, params):
-    row_headers = ['id', 'descripcion']
-    if c.URL_PARAM_ID in params:
-        query= """Select id_{}, descripcion from {} 
-                    where id_{}={}""".format(table, table, table, params[c.URL_PARAM_ID])
-        return client.execute_query_one(query, row_headers)
+def get_catalog(db, obj, id_col, args):    
+    result = None
+    query = db.session.query(obj)
+    if c.URL_PARAM_ID in args:
+        result = query.filter(obj.__table__.c[id_col]  == args[c.URL_PARAM_ID]).first()
+    elif c.URL_PARAM_DESCRIPCION in args:
+        search = "{}%".format(args[c.URL_PARAM_DESCRIPCION])
+        result = query.filter(obj.descripcion.ilike(search))\
+            .order_by(obj.descripcion).all()
     else:
-        desc = params[c.URL_PARAM_DESCRIPCION] if c.URL_PARAM_DESCRIPCION in params else ''
-        query = """Select * from {} 
-                    where lower(descripcion) like lower('{}%') 
-                    order by descripcion""".format(table, desc if desc else '')
-        return client.execute_query_multi(query, row_headers)
+        result = query.order_by(obj.descripcion).all()
+    
+    return Utils().orm_to_json(result)
 
-def get_paises(params):
-    row_headers = ['id', 'nombre', 'codigoISO2', 'codigoISO3']
-    sql_headers = "Select id_pais, nombre, codigoISO2, codigoISO3 "
-    if c.URL_PARAM_ID in params:
-        query = """ {} from pais 
-                    where id_pais={}
-                    order by nombre""".format(sql_headers, params[c.URL_PARAM_ID])
-        return client.execute_query_one(query, row_headers)
+def get_paises(db, args):
+    result = None
+    query = db.session.query(Pais)
+    if c.URL_PARAM_ID in args:
+        result = query.filter(id_pais  = args[c.URL_PARAM_ID]).first()
+    elif c.URL_PARAM_NOMBRE in args:
+        search = "{}%".format(args[c.URL_PARAM_NOMBRE])
+        result = query.filter(Pais.nombre.ilike(search))\
+            .order_by(Pais.nombre).all()
     else:
-        query = """ {} from pais 
-                        where lower(nombre) like lower('{}%') 
-                        order by nombre""".format(sql_headers, params[c.URL_PARAM_NOMBRE] if c.URL_PARAM_NOMBRE in params else '')
-        return client.execute_query_multi(query, row_headers)
+        result = query.order_by(Pais.nombre).all()
+    
+    return Utils().orm_to_json(result)

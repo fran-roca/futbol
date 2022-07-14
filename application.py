@@ -1,21 +1,36 @@
-
-from xmlrpc.client import boolean
-from flask import Flask, request
+from base64 import encode
+from flask import Flask, request, jsonify, make_response, send_file
+from sqlalchemy import false
+from  werkzeug.security import generate_password_hash, check_password_hash
+import jwt
+from datetime import datetime, timedelta
+from functools import wraps
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 from app.src.data.catalog import get_catalog, get_paises
-from app.src.data.jugador import get_jugador, get_min_jugador, insert_jugador, update_jugador
-from app.src.data.valoracion import insert_valoracion
+from app.src.data.jugador import get_jugador, insert_jugador, update_jugador
+from app.src.data.valoracion import get_valoracion, insert_valoracion
+from app.src.utils.mapper import Mapper
+from app.src.utils.pdf import JugadorInforme
+from app.src.utils.utils import Utils
 import os
 import warnings
 import app.src.utils.constants as c
-
+from app.src.data.orm import Equipo, Pais, Perfil, Pie, Posicion, Seguimiento, Somatotipo, User, Visualizacion
 
 # Quitar warnings innecesarios de la salida
 warnings.filterwarnings('ignore')
 
 # -*- coding: utf-8 -*-
 application = Flask(__name__)
+application.config['JSON_SORT_KEYS'] = False
+application.config[c.SECRET_KEY] = os.environ[c.SECRET_KEY]
+application.config[c.SQLALCHEMY_DATABASE_URI] = os.environ[c.SQLALCHEMY_DATABASE_URI]
+application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
+db = SQLAlchemy(application)
 CORS(application)
+
 
 # usando el decorador @app.route para gestionar los enrutadores (Método GET)
 @application.route('/', methods=['GET'])
@@ -28,22 +43,155 @@ def root():
     """
     return "{'Proyecto':'Futbol'}"
 
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        # jwt is passed in the request header
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+        # return 401 if token is not passed
+        if not token:
+            return jsonify({'message' : 'Token no encontrado'}), 401
+  
+        try:
+            # decoding the payload to fetch the stored details
+            data = jwt.decode(token, application.config['SECRET_KEY'])
+            current_user = db.session.query(User)\
+                .filter_by(username = data['username'])\
+                .first()
+        except:
+            return jsonify({
+                'message' : 'Token invalido'
+            }), 401
+        # returns the current logged in users contex to the routes
+        return  f(current_user, *args, **kwargs)
+  
+    return decorated
+
+
+# route for logging user in
+@application.route('/api/auth/login', methods =['POST'])
+def login():
+    # creates dictionary of form data
+    auth = request.get_json()
+  
+    if not auth or not auth.get('email') or not auth.get('password'):
+        # returns 401 if any email or / and password is missing
+        return make_response(
+            'No se ha podido verificar. Login es necesario',
+            401,
+            {'WWW-Authenticate' : 'Basic realm ="Login es necesario"'}
+        )
+  
+    user = db.session.query(User)\
+        .filter_by(email = auth.get('email'))\
+        .first()
+  
+    if not user:
+        # returns 401 if user does not exist
+        return make_response(
+            'Usuario no existe',
+            401,
+            {'WWW-Authenticate' : 'Basic realm ="Usuario no existe"'}
+        )
+  
+    if check_password_hash(user.password, auth.get('password')):
+        # generates the JWT Token
+        token = jwt.encode({
+            'username': user.username,
+            'exp' : datetime.utcnow() + timedelta(minutes = 120)
+        }, application.config['SECRET_KEY'])
+  
+        return make_response(jsonify({'auth-token' : token.decode('UTF-8'),
+                                        'auth-user': {
+                                            'id_user': user.id_user,
+                                            'username': user.username,
+                                            'role': user.role.name
+                                        }}), 201)
+    # returns 403 if password is wrong
+    return make_response(
+        'Password incorrecta',
+        403,
+        {'WWW-Authenticate' : 'Basic realm ="Password incorrecta"'}
+    )
+  
+# signup route
+@application.route('/api/auth/signup', methods =['POST'])
+def signup():
+    # creates a dictionary of the form data
+    data = request.get_json()
+  
+    # gets username, email and password
+    username, email = data.get('username'), data.get('email')
+    password = data.get('password')
+  
+    # checking for existing user
+    user = db.session.query(User)\
+        .filter_by(email = email)\
+        .first()
+    if not user:
+        # database ORM object
+        user = User(
+            username = username,
+            email = email,
+            password = generate_password_hash(password),
+            id_role = 1
+        )
+        # insert user
+        db.session.add(user)
+        db.session.commit()
+
+        return make_response('Usuario registrado correctamente.', 201)
+    else:
+        # returns 202 if user already exists
+        return make_response('Usuario ya existe. Por favor Log in.', 202)
+
+
+
 @application.route('/jugador', methods=['GET', 'POST', 'PUT','DELETE'])
 def jugador():
     if request.method == 'GET':
         args = request.args.to_dict()
-        return get_jugador(args) if c.URL_PARAM_ID in args else get_min_jugador(args)
+        return Mapper().map_jugador_as_json(get_jugador(db, args))
     if request.method == 'POST':
-        return insert_jugador(request.get_json())
+        return insert_jugador(db, request.get_json())
     if request.method == 'PUT':
-        return update_jugador(request.get_json())
+        return update_jugador(db, request.get_json())
 
 @application.route('/valoracion', methods=['GET', 'POST'])
-def valoracion():
+@token_required
+def valoracion(current_user):
     if request.method == 'GET':
-        return {}
+        args = request.args.to_dict()
+        if c.URL_PARAM_ID_JUGADOR in args:
+            return Mapper().map_valoracion_as_json(get_valoracion(db, current_user, args))
+        else:
+            return make_response('Prametro requerido: id_jugador', 403)
     if request.method == 'POST':
-        return insert_valoracion(request.get_json())
+        return insert_valoracion(db, request.get_json())
+    
+    
+@application.route('/informe', methods=['GET'])
+@token_required
+def get_informe(current_user):
+    args = request.args.to_dict()
+    if c.URL_PARAM_ID_JUGADOR in args:
+        args[c.URL_PARAM_ID] = args[c.URL_PARAM_ID_JUGADOR]
+        jugador = get_jugador(db, args)
+        valoracion = get_valoracion(db, current_user, args)
+        pdf = JugadorInforme().create_informe(current_user, jugador, valoracion)
+        
+        response = make_response(pdf.output(dest='S').encode('latin1'));
+        response.mimetype = 'application/pdf'
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = \
+            'inline; filename={}-{}.pdf'.format(jugador.nombre,datetime.now().strftime("%d-%m-%Y_%H:%M:%S"))
+        return response
+    else:
+        return make_response('Prametro requerido: id_jugador', 403)
+
 
 @application.route('/catalog/equipo', methods=['GET'])
 def get_equipo():
@@ -57,7 +205,8 @@ def get_equipo():
                 }
     """
     args = request.args.to_dict()
-    return get_catalog(c.TABLE_EQUIPO, args)
+    return get_catalog(db, Equipo, 'id_equipo', args)
+        
 
 
 @application.route('/catalog/perfil', methods=['GET'])
@@ -72,8 +221,7 @@ def get_perfil():
                 }
     """
     args = request.args.to_dict()
-    return get_catalog(c.TABLE_PERFIL, args)
-
+    return get_catalog(db, Perfil, 'id_perfil', args)
 
 @application.route('/catalog/pie', methods=['GET'])
 def get_pie():
@@ -87,7 +235,7 @@ def get_pie():
                 }
     """
     args = request.args.to_dict()
-    return get_catalog(c.TABLE_PIE, args)
+    return get_catalog(db, Pie, 'id_pie', args)
 
 
 @application.route('/catalog/posicion', methods=['GET'])
@@ -102,22 +250,7 @@ def get_posicion():
                 }
     """
     args = request.args.to_dict()
-    return get_catalog(c.TABLE_POSICION, args)
-
-
-@application.route('/catalog/scout', methods=['GET'])
-def get_scout():
-    """
-        Función para obtener los scouter.
-
-        Returns:
-           json. {
-                id: id_scout (numeric),
-                descripcion: nombre del scout (string)
-                }
-    """
-    args = request.args.to_dict()
-    return get_catalog(c.TABLE_SCOUT, args)
+    return get_catalog(db, Posicion, 'id_posicion', args)
 
 
 @application.route('/catalog/seguimiento', methods=['GET'])
@@ -132,7 +265,7 @@ def get_seguimiento():
                 }
     """
     args = request.args.to_dict()
-    return get_catalog(c.TABLE_SEGUIMIENTO, args)
+    return get_catalog(db, Seguimiento, 'id_seguimiento', args)
 
 
 @application.route('/catalog/somatotipo', methods=['GET'])
@@ -147,7 +280,7 @@ def get_somatotipo():
                 }
     """
     args = request.args.to_dict()
-    return get_catalog(c.TABLE_SOMATOTIPO, args)
+    return get_catalog(db, Somatotipo, 'id_somatotipo', args)
 
 
 @application.route('/catalog/visualizacion', methods=['GET'])
@@ -162,7 +295,7 @@ def get_visualizacion():
                 }
     """
     args = request.args.to_dict()
-    return get_catalog(c.TABLE_VISUALIZACION, args)
+    return get_catalog(db, Visualizacion, 'id_visualizacion', args)
 
 @application.route('/catalog/pais', methods=['GET'])
 def get_pais():
@@ -178,7 +311,7 @@ def get_pais():
                 }
     """
     args = request.args.to_dict()
-    return get_paises(args)
+    return get_pais(db, Pais, args)
 
 # main
 if __name__ == '__main__':

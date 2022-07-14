@@ -4,7 +4,6 @@
 CREATE SCHEMA IF NOT EXISTS `futbol-db` ;
 USE `futbol-db` ;
 
-
 -- -----------------------------------------------------
 -- Table `futbol-db`.`pie`
 -- -----------------------------------------------------
@@ -84,6 +83,8 @@ CREATE TABLE IF NOT EXISTS `futbol-db`.`jugador` (
   INDEX `fk_jugador_pais2_idx` (`id_pais_nacionalidad` ASC),
   INDEX `fk_jugador_somatotipo1_idx` (`id_somatotipo` ASC),
   INDEX `fk_jugador_equipo1_idx` (`id_equipo` ASC),
+  UNIQUE INDEX `nombre_UNIQUE` (`nombre` ASC),
+  UNIQUE INDEX `id_jugador_UNIQUE` (`id_jugador` ASC),
   CONSTRAINT `fk_jugador_pie1`
     FOREIGN KEY (`id_pie`)
     REFERENCES `futbol-db`.`pie` (`id_pie`)
@@ -175,12 +176,33 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `futbol-db`.`scout`
+-- Table `futbol-db`.`role`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `futbol-db`.`scout` (
-  `id_scout` INT NOT NULL AUTO_INCREMENT,
-  `descripcion` VARCHAR(45) NULL,
-  PRIMARY KEY (`id_scout`))
+CREATE TABLE IF NOT EXISTS `futbol-db`.`role` (
+  `id_role` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(20) NULL,
+  PRIMARY KEY (`id_role`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `futbol-db`.`user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `futbol-db`.`user` (
+  `id_user` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NULL,
+  `email` VARCHAR(50) NULL,
+  `password` VARCHAR(120) NULL,
+  `id_role` INT NULL,
+  PRIMARY KEY (`id_user`),
+  UNIQUE INDEX `id_user_UNIQUE` (`id_user` ASC),
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC),
+  INDEX `fk_user_role1_idx` (`id_role` ASC),
+  CONSTRAINT `fk_user_role1`
+    FOREIGN KEY (`id_role`)
+    REFERENCES `futbol-db`.`role` (`id_role`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -189,7 +211,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `futbol-db`.`valoracion` (
   `id_valoracion` INT NOT NULL AUTO_INCREMENT,
-  `id_scout` INT NOT NULL,
+  `id_user` INT NOT NULL,
   `fecha` DATETIME NULL,
   `id_visualizacion` INT NOT NULL,
   `id_equipo` INT NOT NULL,
@@ -206,7 +228,7 @@ CREATE TABLE IF NOT EXISTS `futbol-db`.`valoracion` (
   INDEX `fk_valoracion_visualizacion1_idx` (`id_visualizacion` ASC),
   INDEX `fk_valoracion_equipo3_idx` (`id_equipo` ASC),
   INDEX `fk_valoracion_Seguimiento1_idx` (`id_seguimiento` ASC),
-  INDEX `fk_valoracion_scout1_idx` (`id_scout` ASC),
+  INDEX `fk_valoracion_user1_idx` (`id_user` ASC),
   CONSTRAINT `fk_valoracion_jugador1`
     FOREIGN KEY (`id_jugador`)
     REFERENCES `futbol-db`.`jugador` (`id_jugador`)
@@ -237,9 +259,9 @@ CREATE TABLE IF NOT EXISTS `futbol-db`.`valoracion` (
     REFERENCES `futbol-db`.`seguimiento` (`id_seguimiento`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_valoracion_scout1`
-    FOREIGN KEY (`id_scout`)
-    REFERENCES `futbol-db`.`scout` (`id_scout`)
+  CONSTRAINT `fk_valoracion_user1`
+    FOREIGN KEY (`id_user`)
+    REFERENCES `futbol-db`.`user` (`id_user`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

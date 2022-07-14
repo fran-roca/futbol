@@ -1,25 +1,30 @@
-import json
-from app.src.data.jugadorPerfil import *
-from app import client
 import app.src.utils.constants as c
-
-cursor = client.connection.cursor()
-
-#creates db
+from app.src.data.orm import Valoracion
+from app.src.utils.mapper import Mapper
 
 
-def insert_valoracion(data_jugador):
+def get_valoracion(db, user, args):
+    query = db.session.query(Valoracion)\
+        .filter_by(id_jugador = args[c.URL_PARAM_ID_JUGADOR])
+    
+    if user.id_role != 3:
+        query = query.filter_by(id_user = user.id_user)
+    
+    
+    if c.URL_PARAM_ID_VALORACION in args:
+        query = query.filter(Valoracion.id_valoracion.in_([1,3]))
+    
+    result = query.order_by(Valoracion.fecha.desc()).all()
+    return result
 
-    query = ("INSERT INTO valoracion "
-                    "(id_scout, fecha, id_visualizacion, "
-                    "id_equipo, local, visitante, campeonato, id_seguimiento, "
-                    "descripcion, id_jugador) "
-                "VALUES(%(id_scout)s, %(fecha)s, %(id_visualizacion)s, "
-                "%(id_equipo)s, %(local)s, %(visitante)s, %(campeonato)s ,%(id_seguimiento)s, "
-                "%(descripcion)s, %(id_jugador)s)")
-              
-    cursor.execute(query, data_jugador)
-    client.connection.commit()
 
-    return {'id': cursor.lastrowid}
-   
+def insert_valoracion(db, data_valoracion):
+
+    newValoracion = Mapper().map_json_as_valoracion(data_valoracion)
+    
+    db.session.add(newValoracion)
+    db.session.commit()
+    
+    print(newValoracion)
+
+    return {'text': 'jugador insertado'}

@@ -311,7 +311,7 @@ def get_pais():
                 }
     """
     args = request.args.to_dict()
-    return get_pais(db, Pais, args)
+    return get_paises(db, args)
 
 # main
 if __name__ == '__main__':

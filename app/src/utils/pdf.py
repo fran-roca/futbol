@@ -73,7 +73,7 @@ class JugadorInforme():
             pdf.cell(0, 5, '{} - {}'.format(valoracion.equipo_local.descripcion, valoracion.equipo_visitante.descripcion), 0, 1)
             pdf.cell(0, 5, valoracion.campeonato, 0, 1)
             pdf.ln(5)
-            pdf.cell(0, 10, valoracion.descripcion, 0, 1)
+            self.multi_cell(pdf, [  [200,5,'{}'.format(valoracion.descripcion),0,0]])
 
     def draw_rect_seguimiento(self, pdf: PDF, id_seguimiento):
         rgb_seg =           {1: [0,   0,   0],
@@ -99,6 +99,7 @@ class JugadorInforme():
             max_y = pdf.y if pdf.y > max_y else max_y
             pdf.y = top
             pdf.x = offset 
-        pdf.ln(10)
+        pdf.y = max_y
+        pdf.ln(2)
         
         

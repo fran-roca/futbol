@@ -32,7 +32,6 @@ class JugadorInforme():
         pdf = PDF()
         pdf.set_title('{} - Informe de jugador'.format(user.username))
         self.create_body(pdf, jugador, valoraciones)
-        pdf.output('{}.pdf'.format(jugador.nombre), 'F')
         return pdf
         
     def create_body(self, pdf: PDF, jugador: Jugador, valoraciones):        

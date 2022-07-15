@@ -221,6 +221,7 @@ CREATE TABLE IF NOT EXISTS `futbol-db`.`valoracion` (
   `id_seguimiento` INT NOT NULL,
   `descripcion` VARCHAR(1000) NULL,
   `id_jugador` INT NOT NULL,
+  `active` VARCHAR(1) NOT NULL DEFAULT 'Y',
   PRIMARY KEY (`id_valoracion`),
   INDEX `fk_valoracion_jugador1_idx` (`id_jugador` ASC),
   INDEX `fk_valoracion_equipo1_idx` (`local` ASC),

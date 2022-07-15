@@ -109,6 +109,7 @@ class Valoracion(Base):
     id_seguimiento = Column(Integer, ForeignKey("seguimiento.id_seguimiento"))
     descripcion = Column(String(1000))
     id_jugador = Column(Integer, ForeignKey("jugador.id_jugador"))
+    active = Column(String(1), default='Y')
     user = relationship("User", backref="valoracion")
     visualizacion = relationship("Visualizacion", backref="valoracion")
     equipo = relationship("Equipo", foreign_keys=[id_equipo], backref="valoracion.id_equipo")

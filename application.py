@@ -9,7 +9,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from app.src.data.catalog import get_catalog, get_paises
 from app.src.data.jugador import get_jugador, insert_jugador, update_jugador
-from app.src.data.valoracion import get_valoracion, insert_valoracion
+from app.src.data.valoracion import get_valoracion, insert_valoracion, soft_delete_valoracion
 from app.src.utils.mapper import Mapper
 from app.src.utils.pdf import JugadorInforme
 from app.src.utils.utils import Utils
@@ -160,7 +160,7 @@ def jugador():
     if request.method == 'PUT':
         return update_jugador(db, request.get_json())
 
-@application.route('/valoracion', methods=['GET', 'POST'])
+@application.route('/valoracion', methods=['GET', 'POST', 'DELETE'])
 @token_required
 def valoracion(current_user):
     if request.method == 'GET':
@@ -171,7 +171,12 @@ def valoracion(current_user):
             return make_response('Prametro requerido: id_jugador', 403)
     if request.method == 'POST':
         return insert_valoracion(db, request.get_json())
-    
+    if request.method == 'DELETE':
+        args = request.args.to_dict()
+        if c.URL_PARAM_ID_VALORACION in args:
+            return soft_delete_valoracion(db, args[c.URL_PARAM_ID_VALORACION])
+        else:
+            return make_response('Prametro requerido: id_valoracion', 403)
     
 @application.route('/informe', methods=['GET'])
 @token_required

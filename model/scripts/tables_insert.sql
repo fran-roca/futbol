@@ -2683,7 +2683,18 @@ VALUES
 (2679, "Real Monarchs"),
 (2680, "Vancouver Whitecaps FC II"),
 (2681, "Cincinnati II"),
-(2682, "DC United U23");
+(2682, "DC United U23"),
+(2683,'Dinamo Kiev'),
+(2684,'Getafe U19'),
+(2685,'Getafe U18'),
+(2686,'Getafe U17'),
+(2687,'Getafe U16'),
+(2688,'Getafe U15'),
+(2689,'?'),
+(2690,'NK Neretvanac Opuzen'),
+(2691,'NK Croatia Zmijavci '),
+(2692,'NK Dubrava Tim Kabel'),
+(2693,'HNK Orijent 1919');
 
 
 INSERT INTO `futbol-db`.`pais`
@@ -2939,36 +2950,42 @@ VALUES
 (243,"Yemen","Yemen","Asia","YE","YEM"),
 (244,"Yibuti","Djibouti","África","DJ","DJI"),
 (245,"Zambia","Zambia","África","ZM","ZMB"),
-(246,"Zimbabue","Zimbabwe","África","ZW","ZWE");
+(246,"Zimbabue","Zimbabwe","África","ZW","ZWE"),
+(247,'Kosovo','Kosovo','Europa','XK','XKX');
 
 
 INSERT INTO `futbol-db`.`perfil`
 (`id_perfil`,
 `descripcion`)
 VALUES
-(1, "Agilidad"),
-(2, "Presencia"),
-(3, "Completo"),
-(4, "Aguerrido"),
-(5, "Estable"),
-(6, "Vertical"),
-(7, "Combinativo"),
-(8, "Atleta"),
-(9, "Envergadura"),
-(10, "Intuitivo"),
-(11, "Defensivo"),
-(12, "Mixto"),
-(13, "Creativo"),
-(14, "Recorrido"),
-(15, "Talento"),
-(16, "Potente"),
-(17, "Asociativo"),
-(18, "Llegador"),
-(19, "Área"),
-(20, "Referencia"),
-(21, "Espacios"),
-(22, "Dinámico"),
-(23, "Sin definir");
+(1,'Agilidad - Agility'),
+(2,'Presencia - Presence'),
+(3,'Completo - Complete'),
+(4,'Aguerrido - Brave'),
+(5,'Estable - Stable'),
+(6,'Vertical / Profundo - Upright / Deep'),
+(7,'Combinativo - Control + Pass'),
+(8,'Atleta - Athlete'),
+(9,'Envergadura - Wingspan'),
+(10,'Intuitivo - Intuitive'),
+(11,'Defensivo - Defensive'),
+(12,'Mixto - Mixed / Hybrid'),
+(13,'Creativo - Creative'),
+(14,'Recorrido - Box to Box'),
+(15,'Talento - Talented'),
+(16,'Potente - Powerful'),
+(17,'Asociativo - Associative'),
+(18,'Llegador - Area arrival'),
+(19,'Área - Box'),
+(20,'Referencia - Reference'),
+(21,'Espacios - Spaces'),
+(22,'Dinámico - Dynamic'),
+(23,'Jugador sin definir - Undefinded player'),
+(24,'Entrenador colérico - Choleric coach'),
+(25,'Entrenador flemático - Phlegmatic coach'),
+(26,'Entrenador melancólico - Melancholic coach'),
+(27,'Entrenador sanguíneo - Sanguine coach'),
+(28,'Entrenador de perfil desconocido - Undefined ');
 
 
 
@@ -2976,43 +2993,44 @@ INSERT INTO `futbol-db`.`pie`
 (`id_pie`,
 `descripcion`)
 VALUES
-(1, "Diestro"),
-(2, "Zurdo"),
-(3, "Ambi"),
-(4, "Desconocido");
+(1,'Diestro - Right'),
+(2,'Zurdo - Left'),
+(3,'Ambi - Both'),
+(4,'Desconocido - ?');
 
 
 INSERT INTO `futbol-db`.`posicion`
 (`id_posicion`,
 `descripcion`)
 VALUES
-(1, "Portero"),
-(2, "Lateral derecho"),
-(3, "Lateral izquierdo"),
-(4, "Central derecho"),
-(5, "Central izquierdo"),
-(6, "Pivote"),
-(7, "Extremo derecho"),
-(8, "Extremo izquierdo"),
-(9, "Mediapunta"),
-(10, "Delantero"),
-(11, "Sin definir"),
-(12, "Entrenador");
+(1,'Portero - GK'),
+(2,'Lateral derecho - RB / RWB'),
+(3,'Lateral izquierdo - LB / LWB'),
+(4,'Central derecho - RCB'),
+(5,'Central izquierdo - LCB'),
+(6,'Pivote / MC - CDM / CM'),
+(7,'Extremo derecho - RW'),
+(8,'Extremo izquierdo - LW'),
+(9,'Mediapunta - CAM / Playmaker'),
+(10,'Delantero - CF / Striker'),
+(11,'Sin definir - Undefined'),
+(12,'Entrenador - Coach');
 
 
 INSERT INTO `futbol-db`.`seguimiento`
 (`id_seguimiento`,
 `descripcion`)
 VALUES
-(1, "Fichar 1ᵃ"),
-(2, "Interesante 1ᵃ"),
-(3, "Seguir evolución"),
-(4, "Fichar 2ᵃ"),
-(5, "Fichar 1ᵃ-2ᵃ RFEF"),
-(6, "Fichar 3ᵃ RFEF"),
-(7, "Seguir joven"),
-(8, "Descartar"),
-(9, "Sin valoración");
+(1,'1ª División'),
+(2,'Interesante 1ᵃ'),
+(3,'Seguir Evolución 1ª'),
+(4,'2ª División'),
+(5,'3ª División'),
+(6,'4ª División'),
+(7,'5ª División'),
+(8,'Seguir Joven'),
+(9,'Descartar'),
+(10,'Sin Valoración');
 
 
 
@@ -3020,16 +3038,16 @@ INSERT INTO `futbol-db`.`somatotipo`
 (`id_somatotipo`,
 `descripcion`)
 VALUES
-(1, "Mesomorfo"),
-(2, "Ectomorfo"),
-(3, "Endomorfo (sobrepeso)");
+(1,'Musculoso - Brawny'),
+(2,'Delgado - Slim'),
+(3,'Sobrepeso - Overweight');
 
 
 INSERT INTO `futbol-db`.`visualizacion`
 (`id_visualizacion`,
 `descripcion`)
 VALUES
-(1, "Vivo"),
+(1, "En directo"),
 (2, "TV");
 
 INSERT INTO `futbol-db`.`role`
@@ -3037,5 +3055,5 @@ INSERT INTO `futbol-db`.`role`
 `name`)
 VALUES
 (1, 'ROLE_USER'),
-(2, 'ROLE_MODERATOR'),
+(2, 'ROLE_SCOUTER'),
 (3, 'ROLE_ADMIN');

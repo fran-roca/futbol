@@ -16,7 +16,7 @@ from app.src.utils.utils import Utils
 import os
 import warnings
 import app.src.utils.constants as c
-from app.src.data.orm import Equipo, Pais, Perfil, Pie, Posicion, Seguimiento, Somatotipo, User, Visualizacion
+from app.src.data.orm import Equipo, Perfil, Pie, Posicion, Seguimiento, Somatotipo, User, Visualizacion
 
 # Quitar warnings innecesarios de la salida
 warnings.filterwarnings('ignore')
@@ -165,10 +165,7 @@ def jugador():
 def valoracion(current_user):
     if request.method == 'GET':
         args = request.args.to_dict()
-        if c.URL_PARAM_ID_JUGADOR in args:
-            return Mapper().map_valoracion_as_json(get_valoracion(db, current_user, args))
-        else:
-            return make_response('Prametro requerido: id_jugador', 403)
+        return Mapper().map_valoracion_as_json(get_valoracion(db, current_user, args))
     if request.method == 'POST':
         return insert_valoracion(db, request.get_json())
     if request.method == 'DELETE':
@@ -188,7 +185,7 @@ def get_informe(current_user):
         valoracion = get_valoracion(db, current_user, args)
         pdf = JugadorInforme().create_informe(current_user, jugador, valoracion)
         
-        response = make_response(pdf.output(dest='S').encode('latin1'));
+        response = make_response(pdf.output(dest='S').encode('latin1', 'ignore'));
         response.mimetype = 'application/pdf'
         response.headers['Content-Type'] = 'application/pdf'
         response.headers['Content-Disposition'] = \

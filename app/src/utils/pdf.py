@@ -45,10 +45,15 @@ class JugadorInforme():
                                 [40,10,jugador.pais.nombre,0,0]])
         
         self.multi_cell(pdf, [  [80,10,'{} cm'.format(jugador.estatura),0,0],
-                                [40,10,jugador.somatotipo.descripcion,0,0]])
+                                [40,10,jugador.somatotipo.descripcion
+                                 if jugador.somatotipo else '',0,0]])
         
-        self.multi_cell(pdf, [  [80,10,'{}, {}'.format(jugador.posicion1.descripcion, jugador.posicion2.descripcion),0,0],
-                                [40,10, jugador.pie.descripcion,0,0]])
+        self.multi_cell(pdf, [  [80,10,'{}, {}'.format(jugador.posicion1.descripcion
+                                                       if jugador.posicion1 else '', 
+                                                       jugador.posicion2.descripcion
+                                                       if jugador.posicion2 else ''),0,0],
+                                [40,10, jugador.pie.descripcion
+                                 if jugador.pie else '',0,0]])
         
         pdf.cell(0, 10, ', '.join(map(str, map(lambda perfil: perfil.descripcion, jugador.perfiles))), 0, 1)
         
@@ -81,10 +86,11 @@ class JugadorInforme():
                              3: [255, 255, 0],
                              4: [128, 0,   255],
                              5: [0,   0,   255],
-                             6: [153, 102, 0],
-                             7: [255, 128, 0],
-                             8: [255, 0,   0],
-                             9: [255, 255, 255]
+                             6: [93, 173, 226],
+                             7: [153, 102, 0],
+                             8: [255, 128, 0],
+                             9: [255, 0, 0],
+                             10: [255, 255, 255]
         }
         pdf.set_fill_color(r=rgb_seg[id_seguimiento][0], g=rgb_seg[id_seguimiento][1], b=rgb_seg[id_seguimiento][2])
         pdf.rect(x=pdf.x, y=pdf.y+2, w=6, h=6, style="FD")

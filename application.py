@@ -35,12 +35,6 @@ CORS(application)
 # usando el decorador @app.route para gestionar los enrutadores (Método GET)
 @application.route('/', methods=['GET'])
 def root():
-    """
-        Función para gestionar la salida de la ruta raíz.
-
-        Returns:
-           dict.  Mensaje de salida
-    """
     return "{'Proyecto':'Futbol'}"
 
 
@@ -70,6 +64,10 @@ def token_required(f):
   
     return decorated
 
+
+################################################################
+#######                 AUTHENTICATION                   #######
+################################################################
 
 # route for logging user in
 @application.route('/api/auth/login', methods =['POST'])
@@ -148,7 +146,9 @@ def signup():
         # returns 202 if user already exists
         return make_response('Usuario ya existe. Por favor Log in.', 202)
 
-
+################################################################
+#######                     PLAYER                       #######
+################################################################
 
 @application.route('/jugador', methods=['GET', 'POST', 'PUT','DELETE'])
 def jugador():
@@ -160,6 +160,9 @@ def jugador():
     if request.method == 'PUT':
         return update_jugador(db, request.get_json())
 
+################################################################
+#######                     FEEDBACK                     #######
+################################################################
 @application.route('/valoracion', methods=['GET', 'POST', 'DELETE'])
 @token_required
 def valoracion(current_user):
@@ -174,7 +177,11 @@ def valoracion(current_user):
             return soft_delete_valoracion(db, args[c.URL_PARAM_ID_VALORACION])
         else:
             return make_response('Prametro requerido: id_valoracion', 403)
-    
+
+################################################################
+#######                     REPORT                       #######
+################################################################
+ 
 @application.route('/informe', methods=['GET'])
 @token_required
 def get_informe(current_user):
@@ -195,17 +202,11 @@ def get_informe(current_user):
         return make_response('Prametro requerido: id_jugador', 403)
 
 
+################################################################
+#######                      CATALOG                     #######
+################################################################
 @application.route('/catalog/equipo', methods=['GET'])
 def get_equipo():
-    """
-        Función para obtener los equipos.
-
-        Returns:
-           json. {
-                id: id_equipo (numeric),
-                descripcion: nombre del equipo (string)
-                }
-    """
     args = request.args.to_dict()
     return get_catalog(db, Equipo, 'id_equipo', args)
         
@@ -213,105 +214,40 @@ def get_equipo():
 
 @application.route('/catalog/perfil', methods=['GET'])
 def get_perfil():
-    """
-        Función para obtener los perfiles.
-
-        Returns:
-           json. {
-                id: id_perfil (numeric),
-                descripcion: nombre del perfil (string)
-                }
-    """
     args = request.args.to_dict()
     return get_catalog(db, Perfil, 'id_perfil', args)
 
 @application.route('/catalog/pie', methods=['GET'])
 def get_pie():
-    """
-        Función para obtener los pies.
-
-        Returns:
-           json. {
-                id: id_pie (numeric),
-                descripcion: pie (string)
-                }
-    """
     args = request.args.to_dict()
     return get_catalog(db, Pie, 'id_pie', args)
 
 
 @application.route('/catalog/posicion', methods=['GET'])
 def get_posicion():
-    """
-        Función para obtener las posiciones.
-
-        Returns:
-           json. {
-                id: id_posicion (numeric),
-                descripcion: nombre de la posicion (string)
-                }
-    """
     args = request.args.to_dict()
     return get_catalog(db, Posicion, 'id_posicion', args)
 
 
 @application.route('/catalog/seguimiento', methods=['GET'])
 def get_seguimiento():
-    """
-        Función para obtener los seguimientos.
-
-        Returns:
-           json. {
-                id: id_seguimiento (numeric),
-                descripcion: nombre del seguimiento (string)
-                }
-    """
     args = request.args.to_dict()
     return get_catalog(db, Seguimiento, 'id_seguimiento', args)
 
 
 @application.route('/catalog/somatotipo', methods=['GET'])
 def get_somatotipo():
-    """
-        Función para obtener los somatotipos.
-
-        Returns:
-           json. {
-                id: id_somatotipo (numeric),
-                descripcion: nombre del somatotipo (string)
-                }
-    """
     args = request.args.to_dict()
     return get_catalog(db, Somatotipo, 'id_somatotipo', args)
 
 
 @application.route('/catalog/visualizacion', methods=['GET'])
 def get_visualizacion():
-    """
-        Función para obtener los tipo de visualizacion.
-
-        Returns:
-           json. {
-                id: id_visualizacion (numeric),
-                descripcion: nombre de la visualizacion (string)
-                }
-    """
     args = request.args.to_dict()
     return get_catalog(db, Visualizacion, 'id_visualizacion', args)
 
 @application.route('/catalog/pais', methods=['GET'])
 def get_pais():
-    """
-        Función para obtener los paises.
-
-        Returns:
-           json. {
-                id: id_pais (numeric),
-                nombre: nombre del pais (string)
-                codigoISO2: codigoISO2 (string)
-                codigoISO3: codigoISO3 (string)
-                }
-    """
     args = request.args.to_dict()
     return get_paises(db, args)
 

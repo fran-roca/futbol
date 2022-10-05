@@ -35,12 +35,12 @@ This project intends to have a follow-up of young players to make better decisio
 
 ### Prerequisites
 
+- Have a look to [requirements](requirements.txt)
 - You must have a MySQL database created, you can find the script [here](model\scripts).
 <br/>
 <a href="https://github.com/fran-roca/futbol/blob/d6d6e26ed651f6ef296e2a15296046757c19da28/model/model.png" rel="noopener">
  <img width=700px height=600px src="model\model.png" alt="Model"></a>
  <br/>
-- Have a look to [Requirements](https://github.com/fran-roca/futbol/blob/5caa837210d512b3037dd640436dfd3de84db7ca/requirements.txt)
 
 ### Installing
 

@@ -39,6 +39,7 @@ This project intends to have a follow-up of young players to make better decisio
 <br/>
 <a href="https://github.com/fran-roca/futbol/blob/d6d6e26ed651f6ef296e2a15296046757c19da28/model/model.png" rel="noopener">
  <img width=700px height=600px src="model\model.png" alt="Model"></a>
+ <br/>
 - Have a look to [Requirements](requirements.txt)
 
 ### Installing
